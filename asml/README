@@ -1,0 +1,149 @@
+asml - actually simple media layer
+------------------------------------------------------------------------------
+
+asml attempts to provide a simple, well-documented interface for
+drawing stuff in your C application in a cross-platform way.
+
+libraries such as [SDL](https://www.libsdl.org) and
+[raylib](https://www.raylib.com/) already exist and are great projects,
+but they may be overkill for simple projects that just need stuff
+displayed on a window.
+
+some of its features include:
+- extensively documented
+- written in C99 (mainly for the inline keyword and initializing structs
+by field names)
+- easy to deploy: just add `asml.h` to your source tree
+- contained in a single header file, consists of about 1000 lines of
+code (excluding blank lines and comments)
+- dedicated to the public domain via the Unlicense
+- straightforward API
+- no definition of renderers, textures, buffers, etc, just pixels, this
+can be a benefit for beginners to graphical programming
+- no floating point math, may be useful for some platforms
+
+dependencies:
+- standard C library (obviously)
+- Xlib + development headers (X11 backend only)
+- libwayland + development headers (Wayland backend only)
+- wayland-protocols (Wayland backend only)
+- xkbcommon + development headers (Wayland backend only)
+
+------------------------------------------------------------------------------
+documentation
+
+you can find an example application using asml in the examples/ directory,
+along with a simple make build system. do `make` or `make x11` to build
+the X11 version, and `make wayland` to build the Wayland version.
+
+the header file asml.h acts like a regular header file by default; to
+actually get the code into your project, define `ASML_IMPLEMENTATION` in ONE
+of your source files (if you define it more than once, you'll probably get a
+linker error).
+
+you must also define either `ASML_BACKEND_X11` or `ASML_BACKEND_WAYLAND` to
+use either the X11 or Wayland backends respectively, i recommend doing
+this in your build system with e.g `-DASML_BACKEND_WAYLAND` in
+some kind of Wayland build target.
+
+this may sound complex at first, but it exists to avoid having one executable
+have to depend on both Xlib and the Wayland libraries at the same time,
+and to reduce the size of the executable.
+
+-----------------------
+functions
+
+drawing functions:
+
+- `void asml_clearscr(void)`
+- fills the screen with the color black.
+
+- `void asml_drawcircle(int xm, int ym, int r)`
+- draw a circle with the current drawing color centered at the
+- point `(xm, ym)` with a radius of `r`.
+
+- `void asml_drawline(int x1, int y1, int x2, int y2)`
+- draw a line with the current drawing color from the point
+- `(x1, y1)` to the point `(x2, y2)`.
+
+- `void asml_drawpixel(int x, int y)`
+- draw a pixel with the current drawing color at the point `(x, y)`.
+
+- `void asml_drawrect(int x1, int y1, int x2, int y2)`
+- draw a rectangle with the current drawing color. the coordinates
+- of the top-left corner are `(x1, y1)` and the coordinates of the
+- bottom-right corner are `(x2, y2)`.
+
+- `void asml_fillrect(int x1, int y1, int x2, int y2)`
+- similar to `asml_drawrect`, but the rectangle is filled in
+- with the current drawing color.
+
+- `void asml_flush(void)`
+- flushes everything drawn with the other `asml_` drawing functions to
+- the screen. in other words, calling this after doing some drawing
+- is necessary for that stuff to be actually displayed.
+
+- `void asml_setdrawcolor(uint8_t r, uint8_t g, uint8_t b)`
+- sets the current drawing color to the color specified by the
+- `r`, `g`, and `b` values. the color is in RGB format with values
+- ranging from 0 to 255.
+
+
+general functions:
+- `int asml_init(unsigned int w, unsigned int h, const char *title)`
+- creates a new window with a width of `w` and height of `h`,
+- with the window name/title being `title`. if title is NULL,
+- the behavior is undefined (although you'll probably just
+- get a segmentation fault).
+-
+- calling any other ASML functions before `asml_init` has been called
+- or calling `asml_init` more than once is undefined behaviour.
+
+- `enum asml_event asml_waitevent(struct asml_event_info *event)`
+- wait for an asml event to occur. once one occurs,
+- the event type is returned and (if applicable) any extra information
+- about the event is stored in the `*event` struct.
+
+- `void asml_quit(void)`
+- closes the window created by `asml_init`.
+-
+- calling any other ASML functions after `asml_quit` has been called
+- or calling `asml_quit` more than once is undefined behaviour.
+
+-----------------------
+event types
+
+- `ASML_NOEVENT`
+- used internally, never returned by `asml_waitevent`.
+
+- `ASML_QUIT`
+- the user has requested to quit the application.
+
+- `ASML_RESIZE`
+- the window has been resized, either by the user or some external
+- source (e.g a window manager or Wayland compositor)
+
+- `ASML_KEYDOWN`
+- a key on the keyboard has been pressed.
+- if this event has been fired, the `key` field in the `asml_event_info`
+- struct will contain the name of the key (e.g `e` or `space`).
+- key autorepeat will NOT affect this event.
+
+- `ASML_KEYUP`
+- a key on the keyboard has been released.
+- if this event has been fired, the `key` field in the `asml_event_info`
+- struct will contain the name of the key (e.g `e` or `space`).
+- key autorepeat will NOT affect this event.
+
+- `ASML_MOUSEDOWN`
+- a mouse button has been pressed.
+- if this event has been fired, the `button` field in the `asml_event_info`
+- struct will contain the button number,
+- and the `x` and `y` fields will contains the X and Y coordinates
+- of the point where the button has been pressed.
+
+- `ASML_MOUSEMOTION`
+- the mouse cursor has moved.
+- if this event has been fired, the `x` and `y` fields of the
+- `asml_event_info` struct will contain the X and Y coordinates
+- of the mouse cursor.

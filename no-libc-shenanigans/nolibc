@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ "$#" -lt 2 ]; then
+	echo "usage: $0 compiler cflags ..." >&2
+	exit 1
+fi
+
+cc="$1"
+shift
+$cc -nostdlib -nostdinc -ffreestanding -fno-stack-protector -fno-builtin -fno-unwind-tables -fno-asynchronous-unwind-tables -Wl,--gc-sections -Wa,--noexecstack -static $@ util/_start.S
