@@ -1,4 +1,4 @@
-#include "../util/syscall.h"
+#include <syscall.h>
 
 /* macros */
 #define PRINT(s) syscall(SYS_write, 1, s, sizeof(s) - 1);

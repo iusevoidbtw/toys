@@ -1,4 +1,4 @@
-#include "../types.h"
+#include <types.h>
 
 #ifdef __clang__
 #pragma clang diagnostic push
@@ -8,13 +8,18 @@ __attribute__((__optimize__("-fno-tree-loop-distribute-patterns")))
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif /* __clang__ */
-void *
-memset(void *s, int c, size_t n)
+int
+memcmp(const void *s1, const void *s2, size_t n)
 {
-	uint8_t *u8s = (uint8_t *)(s);
+	const uint8_t *u8s1 = (uint8_t *)(s1);
+	const uint8_t *u8s2 = (uint8_t *)(s2);
 	size_t i;
 	for (i = 0; i < n; ++i) {
-		u8s[i] = (uint8_t)(c);
+		if (u8s1[i] < u8s2[i]) {
+			return -1;
+		} else if (u8s1[i] > u8s2[i]) {
+			return 1;
+		}
 	}
-	return s;
+	return 0;
 }

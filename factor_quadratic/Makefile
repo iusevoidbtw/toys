@@ -1,5 +1,5 @@
 compiler = clang
-options  = -std=c89 -pedantic -Wall -Wextra -Wdeprecated -Wconversion -Wstrict-prototypes -Werror -Os
+options  = -std=c99 -pedantic -Wall -Wextra -Wdeprecated -Wconversion -Wstrict-prototypes -Werror -Os
 output   = factor_quadratic
 sources  = factor_quadratic.c
 $(output): $(sources)

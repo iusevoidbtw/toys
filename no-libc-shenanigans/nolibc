@@ -7,4 +7,4 @@ fi
 
 cc="$1"
 shift
-$cc -nostdlib -nostdinc -ffreestanding -fno-stack-protector -fno-builtin -fno-unwind-tables -fno-asynchronous-unwind-tables -Wl,--gc-sections -Wa,--noexecstack -static $@ util/_start.S
+$cc -nostdlib -nostdinc -ffreestanding -fno-stack-protector -fno-builtin -fno-unwind-tables -fno-asynchronous-unwind-tables -Wl,--gc-sections -Wa,--noexecstack -static -Iinclude $@ src/_start.s

@@ -1,7 +1,5 @@
-#include "../util/syscall.h"
-#include "../util/types.h"
-
-#define O_RDONLY      0
+#include <syscall.h>
+#include <types.h>
 
 static const char *hex = "0123456789ABCDEF";
 

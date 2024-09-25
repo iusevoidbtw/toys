@@ -1,6 +1,6 @@
-#include "../util/mem.h"
-#include "../util/syscall.h"
-#include "../util/types.h"
+#include <mem.h>
+#include <syscall.h>
+#include <types.h>
 
 /*
  * ===========================================================================
